@@ -1,0 +1,15 @@
+PROJECT FOLDER STRUCTURE
+
+|
+|
+|-------index.html
+|-------style.css
+|-------script.js
+|-------projectfolderstructure.md
+|-------readme.md
+|-------screenshots/
+|		Calendar - Darkmode.png
+|		Calendar - Lightmode.png
+|		Dashboard - Darkmode.png
+|		Dashboard - Lightmode.png
+|		Settings - Lightmode.png

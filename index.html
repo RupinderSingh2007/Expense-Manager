@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Expense Manager</title>
+
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <!-- App JS -->
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo">EM</div>
+      <div class="title-group">
+        <h1>Expense Manager</h1>
+        <p>Track • Analyze • Control your spending</p>
+      </div>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="nav-btn active" id="tab-dashboard" type="button">Dashboard</button>
+      <button class="nav-btn" id="tab-calendar" type="button">Calendar</button>
+    </nav>
+
+    <div class="header-right">
+      <button id="theme-toggle" type="button" title="Toggle dark mode">🌙</button>
+      <button class="settings-btn" type="button" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <!-- SETTINGS MENU -->
+  <div class="settings-menu hidden" id="settingsMenu">
+    <h3>Settings</h3>
+
+    <div class="settings-item">
+      <button id="download-btn" type="button">Download Data</button>
+    </div>
+
+    <div class="settings-item">
+      <button id="reset-btn" class="danger" type="button">Reset All Data</button>
+    </div>
+
+    <div class="settings-item">
+      <label for="currency-select">Currency</label>
+      <select id="currency-select">
+        <option value="₹">₹ INR</option>
+        <option value="$">$ USD</option>
+        <option value="€">€ EUR</option>
+        <option value="£">£ GBP</option>
+        <option value="¥">¥ YEN</option>
+        <option value="₽">₽ RUBLE</option>
+      </select>
+    </div>
+
+    <div class="settings-item">
+      <button id="toggle-budget-settings" type="button">Budgets ⬇️</button>
+    </div>
+
+    <div class="budget-settings hidden" id="budgetSettings">
+      <label for="budget-category">Category</label>
+      <select id="budget-category"></select>
+
+      <label for="budget-amount">Monthly Budget</label>
+      <input type="number" id="budget-amount" placeholder="Enter amount" min="1" />
+
+      <button id="save-budget-btn" type="button">Save Budget</button>
+    </div>
+
+    <div class="settings-item">
+      <label for="new-category">Add / Delete Category</label>
+      <input type="text" id="new-category" placeholder="e.g. Coffee" />
+      <button id="add-category-btn" type="button">Add Category</button>
+      <button id="delete-category-btn" class="danger" type="button">Delete Category</button>
+    </div>
+
+    <div class="settings-item about">
+      <p><strong>Expense Manager</strong></p>
+      <p>Version 1.0</p>
+      <p>Built by Rupinder Singh</p>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- DASHBOARD VIEW -->
+    <section id="dashboard-view">
+      <div class="container">
+
+        <!-- LEFT -->
+        <div class="left-section">
+
+          <section class="balance-section">
+            <div class="card balance">
+              <h3>Total Balance</h3>
+              <p id="total-balance">₹0</p>
+            </div>
+            <div class="card income">
+              <h3>Income</h3>
+              <p id="total-income">₹0</p>
+            </div>
+            <div class="card expense">
+              <h3>Expenses</h3>
+              <p id="total-expense">₹0</p>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h2>Add New Transaction</h2>
+
+            <form id="transaction-form">
+              <div class="form-control">
+                <label>Description</label>
+                <input type="text" id="description" placeholder="e.g. Grocery" required />
+              </div>
+
+              <div class="form-control">
+                <label>Amount</label>
+                <input type="number" id="amount" placeholder="e.g. 500" required />
+              </div>
+
+              <div class="form-control">
+                <label>Category</label>
+                <select id="category"></select>
+              </div>
+
+              <div class="form-control">
+                <label>Type</label>
+                <select id="type">
+                  <option value="expense">Expense</option>
+                  <option value="income">Income</option>
+                </select>
+              </div>
+
+              <button type="submit">Add Transaction</button>
+            </form>
+          </section>
+
+          <section class="list-section">
+            <h2>Transaction History</h2>
+            <ul id="transaction-list"></ul>
+            <button id="toggle-transactions" class="toggle-btn" type="button">Show more</button>
+          </section>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right-section">
+          <section class="chart-section">
+            <h2>Expense Breakdown</h2>
+            <canvas id="expenseChart"></canvas>
+          </section>
+
+          <div class="budget-alerts">
+            <h3>Smart Budget Alerts</h3>
+            <div id="budget-alert-content">
+              <p class="no-alerts">Set budgets to get smart alerts</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CALENDAR VIEW -->
+    <section id="calendar-view" class="hidden">
+      <div class="calendar-layout">
+
+        <!-- LEFT: CALENDAR -->
+        <div class="calendar-main">
+          <div class="calendar-container">
+
+            <div class="calendar-header">
+              <button id="prev-month" class="cal-nav-btn" type="button">◀</button>
+              <h2 id="calendar-title">Month</h2>
+              <button id="next-month" class="cal-nav-btn" type="button">▶</button>
+            </div>
+
+            <div class="calendar-grid">
+              <div class="weekday">Mon</div>
+              <div class="weekday">Tue</div>
+              <div class="weekday">Wed</div>
+              <div class="weekday">Thu</div>
+              <div class="weekday">Fri</div>
+              <div class="weekday">Sat</div>
+              <div class="weekday">Sun</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- RIGHT: SIDE PANEL -->
+        <div class="calendar-side">
+
+          <div class="calendar-limits-card">
+            <h3>Spending Levels</h3>
+
+            <label>
+              🟢 Low (≤)
+              <input type="number" id="limit-low" min="0" />
+            </label>
+
+            <label>
+              🟡 Moderate (≤)
+              <input type="number" id="limit-medium" min="0" />
+            </label>
+
+            <button id="save-calendar-limits" type="button">Save Limits</button>
+          </div>
+
+          <div class="day-details-card" id="day-details">
+            <h3>Day Details</h3>
+            <p class="muted">Select a day to view expenses</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>Built by Rupinder Singh</p>
+  </footer>
+
+</body>
+</html>
