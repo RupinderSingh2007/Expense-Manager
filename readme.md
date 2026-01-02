@@ -37,7 +37,7 @@ How to Run Locally?
 
 1. Clone the repository
 
- 	git clone ------
+ 	git clone https://github.com/RupinderSingh2007/Expense-Manager.git
 
 2\. Open the project folder
 
@@ -67,3 +67,4 @@ Author:
 Rupinder Singh
 
 * Frontend Dev
+
