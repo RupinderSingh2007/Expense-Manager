@@ -39,9 +39,14 @@ How to Run Locally?
 
  	git clone https://github.com/RupinderSingh2007/Expense-Manager.git
 
-2\. Open the project folder
+2. Open the project folder
 
-3\. Open *index.html* in your browser
+3. Open *index.html* in your browser
+
+OR
+
+just search on google:
+  expensemanager-rs.netlify.app
 
 
 
@@ -67,4 +72,5 @@ Author:
 Rupinder Singh
 
 * Frontend Dev
+
 
