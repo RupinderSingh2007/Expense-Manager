@@ -46,7 +46,7 @@ How to Run Locally?
 OR
 
 just search on google:
-  expensemanager-rs.netlify.app
+  https://expensemanager-rs.netlify.app
 
 
 
@@ -72,5 +72,6 @@ Author:
 Rupinder Singh
 
 * Frontend Dev
+
 
 
