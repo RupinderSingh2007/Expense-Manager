@@ -7,21 +7,21 @@
 
   <link rel="stylesheet" href="style.css" />
 
-  <!-- Chart.js -->
+  <!-- Adding the Chart.js-->
   <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-  <!-- App JS -->
+  <!-- Adding the Actual Javascript file -->
   <script src="script.js" defer></script>
 </head>
 
 <body>
 
-  <!-- HEADER -->
+  <!-- Header -->
   <header class="app-header">
     <div class="header-left">
       <div class="logo">EM</div>
       <div class="title-group">
         <h1>Expense Manager</h1>
-        <p>Track • Analyze • Control your spending</p>
+        <p>Track - Analyze - Control your spending</p>
       </div>
     </div>
 
@@ -36,18 +36,19 @@
     </div>
   </header>
 
-  <!-- SETTINGS MENU -->
+  <!-- Settings menu -->
   <div class="settings-menu hidden" id="settingsMenu">
     <h3>Settings</h3>
 
+    <!-- for Downloading the whole data in CSV file-->
     <div class="settings-item">
       <button id="download-btn" type="button">Download Data</button>
     </div>
-
+    <!-- to reset all the data -->
     <div class="settings-item">
       <button id="reset-btn" class="danger" type="button">Reset All Data</button>
     </div>
-
+    <!-- to change the currency logo-->
     <div class="settings-item">
       <label for="currency-select">Currency</label>
       <select id="currency-select">
@@ -59,28 +60,25 @@
         <option value="₽">₽ RUBLE</option>
       </select>
     </div>
-
+    <!-- to add the budget for each categories -->
     <div class="settings-item">
       <button id="toggle-budget-settings" type="button">Budgets ⬇️</button>
     </div>
-
     <div class="budget-settings hidden" id="budgetSettings">
       <label for="budget-category">Category</label>
       <select id="budget-category"></select>
-
       <label for="budget-amount">Monthly Budget</label>
       <input type="number" id="budget-amount" placeholder="Enter amount" min="1" />
-
       <button id="save-budget-btn" type="button">Save Budget</button>
     </div>
-
+    <!-- to add or delete the category -->
     <div class="settings-item">
       <label for="new-category">Add / Delete Category</label>
       <input type="text" id="new-category" placeholder="e.g. Coffee" />
       <button id="add-category-btn" type="button">Add Category</button>
       <button id="delete-category-btn" class="danger" type="button">Delete Category</button>
     </div>
-
+    <!-- small desc -->
     <div class="settings-item about">
       <p><strong>Expense Manager</strong></p>
       <p>Version 1.0</p>
@@ -88,16 +86,14 @@
     </div>
   </div>
 
-  <!-- MAIN -->
+  <!-- main -->
   <main>
-
-    <!-- DASHBOARD VIEW -->
+    <!-- Dashboard tab -->
     <section id="dashboard-view">
       <div class="container">
-
-        <!-- LEFT -->
+        <!-- left containers -->
         <div class="left-section">
-
+          <!-- Showing the Calculations above -->
           <section class="balance-section">
             <div class="card balance">
               <h3>Total Balance</h3>
@@ -113,25 +109,22 @@
             </div>
           </section>
 
+          <!--Adding a new transaction -->
           <section class="form-section">
             <h2>Add New Transaction</h2>
-
             <form id="transaction-form">
               <div class="form-control">
                 <label>Description</label>
                 <input type="text" id="description" placeholder="e.g. Grocery" required />
               </div>
-
               <div class="form-control">
                 <label>Amount</label>
                 <input type="number" id="amount" placeholder="e.g. 500" required />
               </div>
-
               <div class="form-control">
                 <label>Category</label>
                 <select id="category"></select>
               </div>
-
               <div class="form-control">
                 <label>Type</label>
                 <select id="type">
@@ -139,26 +132,27 @@
                   <option value="income">Income</option>
                 </select>
               </div>
-
               <button type="submit">Add Transaction</button>
             </form>
           </section>
 
+          <!-- transaction history -->
           <section class="list-section">
             <h2>Transaction History</h2>
             <ul id="transaction-list"></ul>
             <button id="toggle-transactions" class="toggle-btn" type="button">Show more</button>
           </section>
-
         </div>
 
-        <!-- RIGHT -->
+        <!-- right containers -->
         <div class="right-section">
           <section class="chart-section">
+            <!--for the piechart-->
             <h2>Expense Breakdown</h2>
             <canvas id="expenseChart"></canvas>
           </section>
 
+          <!-- smart budget alerts container -->
           <div class="budget-alerts">
             <h3>Smart Budget Alerts</h3>
             <div id="budget-alert-content">
@@ -166,24 +160,25 @@
             </div>
           </div>
         </div>
-
       </div>
     </section>
 
-    <!-- CALENDAR VIEW -->
+    <!-- Calendar Tab -->
     <section id="calendar-view" class="hidden">
       <div class="calendar-layout">
 
-        <!-- LEFT: CALENDAR -->
+        <!-- Left side main calendar table -->
         <div class="calendar-main">
           <div class="calendar-container">
 
+            <!-- calendar month-->
             <div class="calendar-header">
               <button id="prev-month" class="cal-nav-btn" type="button">◀</button>
               <h2 id="calendar-title">Month</h2>
               <button id="next-month" class="cal-nav-btn" type="button">▶</button>
             </div>
 
+            <!--calendar days of week-->
             <div class="calendar-grid">
               <div class="weekday">Mon</div>
               <div class="weekday">Tue</div>
@@ -197,39 +192,38 @@
           </div>
         </div>
 
-        <!-- RIGHT: SIDE PANEL -->
+        <!-- right side containers -->
         <div class="calendar-side">
 
+          <!-- day spending limits-->
           <div class="calendar-limits-card">
             <h3>Spending Levels</h3>
-
             <label>
               🟢 Low (≤)
               <input type="number" id="limit-low" min="0" />
             </label>
-
             <label>
               🟡 Moderate (≤)
               <input type="number" id="limit-medium" min="0" />
             </label>
-
             <button id="save-calendar-limits" type="button">Save Limits</button>
           </div>
 
+          <!-- day details-->
           <div class="day-details-card" id="day-details">
             <h3>Day Details</h3>
             <p class="muted">Select a day to view expenses</p>
           </div>
-
         </div>
       </div>
     </section>
-
   </main>
 
+  <!-- footer-->
   <footer>
     <p>Built by Rupinder Singh</p>
   </footer>
 
 </body>
 </html>
+
