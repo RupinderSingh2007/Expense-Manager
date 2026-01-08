@@ -1,12 +1,4 @@
-/* =========================================================
-   Expense Manager — Clean JS (single init, no patch blocks)
-   LocalStorage keys preserved:
-   - transactions, budgets, categories, currency, theme, calendarLimits
-   ========================================================= */
-
-/* -----------------------------
-   State + Storage Keys
------------------------------- */
+// State + Storage Keys (local storage)
 const STORAGE = {
   transactions: "transactions",
   budgets: "budgets",
@@ -15,12 +7,12 @@ const STORAGE = {
   theme: "theme",
   calendarLimits: "calendarLimits",
 };
-
+// default categories
 const DEFAULT_CATEGORIES = [
   "Food", "Rent", "Travel", "Shopping", "Salary",
   "Entertainment", "Health", "Education", "Subscriptions",
 ];
-
+// assigning a constant to calendar limits
 const DEFAULT_CAL_LIMITS = { low: 500, medium: 1500 };
 
 let state = {
@@ -38,9 +30,7 @@ let state = {
 let dom = {};
 let expenseChart = null;
 
-/* -----------------------------
-   Boot
------------------------------- */
+// Boot
 document.addEventListener("DOMContentLoaded", () => {
   cacheDom();
   loadState();
@@ -50,9 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderAll();
 });
 
-/* -----------------------------
-   DOM Cache
------------------------------- */
+// DOM Cache
 function cacheDom() {
   dom = {
     // Tabs + Views
@@ -60,51 +48,41 @@ function cacheDom() {
     tabCalendar: document.getElementById("tab-calendar"),
     viewDashboard: document.getElementById("dashboard-view"),
     viewCalendar: document.getElementById("calendar-view"),
-
     // Header controls
     themeToggle: document.getElementById("theme-toggle"),
     settingsBtn: document.querySelector(".settings-btn"),
     settingsMenu: document.getElementById("settingsMenu"),
-
     // Form
     form: document.getElementById("transaction-form"),
     description: document.getElementById("description"),
     amount: document.getElementById("amount"),
     category: document.getElementById("category"),
     type: document.getElementById("type"),
-
     // Transaction list
     txList: document.getElementById("transaction-list"),
     toggleTransactions: document.getElementById("toggle-transactions"),
-
     // Summary
     totalBalance: document.getElementById("total-balance"),
     totalIncome: document.getElementById("total-income"),
     totalExpense: document.getElementById("total-expense"),
-
     // Chart
     chartCanvas: document.getElementById("expenseChart"),
-
     // Smart alerts
     budgetAlertContent: document.getElementById("budget-alert-content"),
-
     // Settings actions
     downloadBtn: document.getElementById("download-btn"),
     resetBtn: document.getElementById("reset-btn"),
     currencySelect: document.getElementById("currency-select"),
-
     // Budgets settings panel
     toggleBudgetSettings: document.getElementById("toggle-budget-settings"),
     budgetPanel: document.getElementById("budgetSettings"),
     budgetCategory: document.getElementById("budget-category"),
     budgetAmount: document.getElementById("budget-amount"),
     saveBudgetBtn: document.getElementById("save-budget-btn"),
-
     // Categories
     newCategory: document.getElementById("new-category"),
     addCategoryBtn: document.getElementById("add-category-btn"),
     deleteCategoryBtn: document.getElementById("delete-category-btn"),
-
     // Calendar
     prevMonth: document.getElementById("prev-month"),
     nextMonth: document.getElementById("next-month"),
@@ -116,10 +94,7 @@ function cacheDom() {
     dayDetails: document.getElementById("day-details"),
   };
 }
-
-/* -----------------------------
-   State Load/Save
------------------------------- */
+// State Load/Save
 function loadState() {
   state.transactions = safeParse(localStorage.getItem(STORAGE.transactions), []);
   state.budgets = safeParse(localStorage.getItem(STORAGE.budgets), {});
@@ -128,11 +103,9 @@ function loadState() {
   state.theme = localStorage.getItem(STORAGE.theme) || "light";
   state.calendarLimits = safeParse(localStorage.getItem(STORAGE.calendarLimits), { ...DEFAULT_CAL_LIMITS });
 }
-
 function save(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
 }
-
 function safeParse(raw, fallback) {
   try {
     return raw ? JSON.parse(raw) : fallback;
@@ -140,10 +113,7 @@ function safeParse(raw, fallback) {
     return fallback;
   }
 }
-
-/* -----------------------------
-   Events
------------------------------- */
+// Events
 function bindEvents() {
   // Tabs
   dom.tabDashboard?.addEventListener("click", () => showView("dashboard"));
@@ -152,27 +122,23 @@ function bindEvents() {
     syncCalendarLimitsInputs();
     renderCalendar();
   });
-
   // Theme
   dom.themeToggle?.addEventListener("click", () => {
     state.theme = document.body.classList.contains("dark") ? "light" : "dark";
     localStorage.setItem(STORAGE.theme, state.theme);
     applyTheme(state.theme);
   });
-
   // Settings open/close
   dom.settingsBtn?.addEventListener("click", (e) => {
     e.stopPropagation();
     dom.settingsMenu?.classList.toggle("hidden");
   });
-
   document.addEventListener("click", (e) => {
     if (!dom.settingsMenu || !dom.settingsBtn) return;
     const clickedMenu = dom.settingsMenu.contains(e.target);
     const clickedBtn = dom.settingsBtn.contains(e.target);
     if (!clickedMenu && !clickedBtn) dom.settingsMenu.classList.add("hidden");
   });
-
   // Add transaction
   dom.form?.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -194,8 +160,7 @@ function bindEvents() {
     dom.form.reset();
     renderAll();
   });
-
-  // Transaction list delete (event delegation)
+  // Transaction list delete
   dom.txList?.addEventListener("click", (e) => {
     const btn = e.target.closest(".delete-tx-btn");
     if (!btn) return;
@@ -209,23 +174,19 @@ function bindEvents() {
     save(STORAGE.transactions, state.transactions);
     renderAll();
   });
-
   // Show more / less
   dom.toggleTransactions?.addEventListener("click", () => {
     state.showAllTransactions = !state.showAllTransactions;
     renderTransactionHistory();
   });
-
   // Currency
   dom.currencySelect?.addEventListener("change", (e) => {
     state.currency = e.target.value;
     localStorage.setItem(STORAGE.currency, state.currency);
     renderAll();
   });
-
   // Download
   dom.downloadBtn?.addEventListener("click", downloadCSV);
-
   // Reset
   dom.resetBtn?.addEventListener("click", () => {
     if (!confirm("Are you sure you want to delete all data?")) return;
@@ -241,7 +202,6 @@ function bindEvents() {
     hydrateSelects();
     renderAll();
   });
-
   // Budget panel toggle
   dom.toggleBudgetSettings?.addEventListener("click", () => {
     if (!dom.budgetPanel) return;
@@ -250,7 +210,6 @@ function bindEvents() {
       ? "Budgets"
       : "Budgets";
   });
-
   // Budget save
   dom.saveBudgetBtn?.addEventListener("click", () => {
     const cat = dom.budgetCategory.value;
@@ -266,13 +225,11 @@ function bindEvents() {
     dom.saveBudgetBtn.textContent = "Saved";
     setTimeout(() => (dom.saveBudgetBtn.textContent = "Save Budget"), 900);
   });
-
   // Budget category change -> load saved value
   dom.budgetCategory?.addEventListener("change", () => {
     const cat = dom.budgetCategory.value;
     dom.budgetAmount.value = state.budgets[cat] ?? "";
   });
-
   // Category add/delete
   dom.addCategoryBtn?.addEventListener("click", () => {
     const name = dom.newCategory.value.trim();
@@ -291,11 +248,11 @@ function bindEvents() {
     if (!name) return alert("Type a category name to delete");
     if (!state.categories.includes(name)) return alert("Category not found.");
 
-    // Do NOT alter transactions (history stays history)
+    // Do NOT alter transactions
     state.categories = state.categories.filter(c => c !== name);
     save(STORAGE.categories, state.categories);
 
-    // Remove budget entry for that category (safe)
+    // Remove budget entry for that category
     if (Object.prototype.hasOwnProperty.call(state.budgets, name)) {
       delete state.budgets[name];
       save(STORAGE.budgets, state.budgets);
@@ -306,7 +263,6 @@ function bindEvents() {
     dom.newCategory.value = "";
     alert("Category deleted (transactions unchanged).");
   });
-
   // Calendar month navigation
   dom.prevMonth?.addEventListener("click", () => {
     state.currentCalendarDate.setMonth(state.currentCalendarDate.getMonth() - 1);
@@ -317,7 +273,6 @@ function bindEvents() {
     state.currentCalendarDate.setMonth(state.currentCalendarDate.getMonth() + 1);
     renderCalendar();
   });
-
   // Calendar limits save
   dom.saveCalLimits?.addEventListener("click", () => {
     const low = Number(dom.limitLow.value);
@@ -333,10 +288,7 @@ function bindEvents() {
     renderCalendar();
   });
 }
-
-/* -----------------------------
-   Theme
------------------------------- */
+// Theme
 function applyTheme(theme) {
   const t = theme === "dark" ? "dark" : "light";
   document.body.classList.remove("light", "dark");
@@ -344,10 +296,7 @@ function applyTheme(theme) {
 
   if (dom.themeToggle) dom.themeToggle.textContent = t === "dark" ? "☀️" : "🌙";
 }
-
-/* -----------------------------
-   View switching
------------------------------- */
+// View switching
 function showView(view) {
   const isDashboard = view === "dashboard";
 
@@ -359,20 +308,14 @@ function showView(view) {
 
   if (!isDashboard) renderCalendar();
 }
-
-/* -----------------------------
-   Select hydration (categories everywhere)
------------------------------- */
+// Select hydration (categories everywhere)
 function hydrateSelects() {
   // Categories in transaction form
   if (dom.category) fillSelect(dom.category, state.categories);
-
   // Categories in budget settings
   if (dom.budgetCategory) fillSelect(dom.budgetCategory, state.categories);
-
   // Currency select
   if (dom.currencySelect) dom.currencySelect.value = state.currency;
-
   // Budget amount input sync
   if (dom.budgetCategory && dom.budgetAmount) {
     const cat = dom.budgetCategory.value;
@@ -391,26 +334,19 @@ function fillSelect(selectEl, values) {
   });
   if (values.includes(current)) selectEl.value = current;
 }
-
-/* -----------------------------
-   Render: All
------------------------------- */
+// Render: All
 function renderAll() {
   renderTransactionHistory();
   renderSummary();
   renderChart();
   renderBudgetAlerts();
-
   // Keep calendar updated if open
   if (dom.viewCalendar && !dom.viewCalendar.classList.contains("hidden")) {
     syncCalendarLimitsInputs();
     renderCalendar();
   }
 }
-
-/* -----------------------------
-   Transactions
------------------------------- */
+// Transactions
 function renderTransactionHistory() {
   if (!dom.txList) return;
 
@@ -420,7 +356,6 @@ function renderTransactionHistory() {
   const toShow = state.showAllTransactions ? all.slice().reverse() : all.slice(-3).reverse();
 
   toShow.forEach(renderTransactionRow);
-
   // Toggle button visibility + label
   if (!dom.toggleTransactions) return;
 
@@ -455,10 +390,7 @@ function renderTransactionRow(t) {
 
   dom.txList.appendChild(li);
 }
-
-/* -----------------------------
-   Summary
------------------------------- */
+// Summary
 function renderSummary() {
   let income = 0, expense = 0;
 
@@ -471,10 +403,7 @@ function renderSummary() {
   if (dom.totalExpense) dom.totalExpense.textContent = `${state.currency}${expense}`;
   if (dom.totalBalance) dom.totalBalance.textContent = `${state.currency}${income - expense}`;
 }
-
-/* -----------------------------
-   Chart
------------------------------- */
+// pieChart
 function renderChart() {
   if (!dom.chartCanvas || typeof Chart === "undefined") return;
 
@@ -494,11 +423,7 @@ function renderChart() {
     options: { plugins: { legend: { position: "bottom" } } }
   });
 }
-
-/* -----------------------------
-   Smart Budget Alerts (WORKING)
-   - Uses monthly spending (current month) vs saved budget per category
------------------------------- */
+// Smart Budget Alerts
 function renderBudgetAlerts() {
   if (!dom.budgetAlertContent) return;
 
@@ -521,7 +446,7 @@ function renderBudgetAlerts() {
     spentByCat[t.category] = (spentByCat[t.category] || 0) + t.amount;
   });
 
-  // Render alerts (sorted by highest usage)
+  // Render alerts -sorted by highest usage
   const rows = budgetEntries
     .map(([cat, limit]) => {
       const spent = spentByCat[cat] || 0;
@@ -556,9 +481,7 @@ function renderBudgetAlerts() {
   `;
 }
 
-/* -----------------------------
-   Calendar
------------------------------- */
+// Calendar
 function syncCalendarLimitsInputs() {
   if (dom.limitLow) dom.limitLow.value = state.calendarLimits.low;
   if (dom.limitMedium) dom.limitMedium.value = state.calendarLimits.medium;
@@ -567,7 +490,7 @@ function syncCalendarLimitsInputs() {
 function renderCalendar() {
   if (!dom.calendarGrid || !dom.calendarTitle) return;
 
-  // Remove old day cells (keep weekday headers)
+  // Remove old day cells -keep weekday headers
   dom.calendarGrid.querySelectorAll(".calendar-day, .empty").forEach(el => el.remove());
 
   const year = state.currentCalendarDate.getFullYear();
@@ -664,9 +587,7 @@ function renderDayDetails(year, month, day) {
   `;
 }
 
-/* -----------------------------
-   CSV Download
------------------------------- */
+// CSV Download
 function downloadCSV() {
   if (!state.transactions.length) {
     alert("No data to download");
@@ -698,9 +619,7 @@ function downloadCSV() {
   URL.revokeObjectURL(url);
 }
 
-/* -----------------------------
-   Tiny utility
------------------------------- */
+// to prevent XSS vulnerabilities
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
